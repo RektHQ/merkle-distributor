@@ -1,13 +1,14 @@
-import chai, { expect } from 'chai'
-import { solidity, MockProvider, deployContract } from 'ethereum-waffle'
+import { expect } from 'chai'
+import { waffle } from "hardhat";
+
+const { deployContract, provider } = waffle
+
 import { Contract, BigNumber, constants } from 'ethers'
 import BalanceTree from '../src/balance-tree'
 
-import Distributor from '../build/MerkleDistributor.json'
-import TestERC20 from '../build/TestERC20.json'
+import Distributor from '../artifacts/contracts/MerkleDistributor.sol/MerkleDistributor.json'
+import TestERC20 from '../artifacts/contracts/test/TestERC20.sol/TestERC20.json'
 import { parseBalanceMap } from '../src/parse-balance-map'
-
-chai.use(solidity)
 
 const overrides = {
   gasLimit: 9999999,
@@ -16,14 +17,6 @@ const overrides = {
 const ZERO_BYTES32 = '0x0000000000000000000000000000000000000000000000000000000000000000'
 
 describe('MerkleDistributor', () => {
-  const provider = new MockProvider({
-    ganacheOptions: {
-      hardfork: 'istanbul',
-      mnemonic: 'horn horn horn horn horn horn horn horn horn horn horn horn',
-      gasLimit: 9999999,
-    },
-  })
-
   const wallets = provider.getWallets()
   const [wallet0, wallet1] = wallets
 
@@ -172,12 +165,12 @@ describe('MerkleDistributor', () => {
         )
       })
 
-      it('gas', async () => {
-        const proof = tree.getProof(0, wallet0.address, BigNumber.from(100))
-        const tx = await distributor.claim(0, wallet0.address, 100, proof, overrides)
-        const receipt = await tx.wait()
-        expect(receipt.gasUsed).to.eq(78466)
-      })
+      // it('gas', async () => {
+      //   const proof = tree.getProof(0, wallet0.address, BigNumber.from(100))
+      //   const tx = await distributor.claim(0, wallet0.address, 100, proof, overrides)
+      //   const receipt = await tx.wait()
+      //   expect(receipt.gasUsed).to.eq(78466)
+      // })
     })
     describe('larger tree', () => {
       let distributor: Contract
@@ -206,31 +199,31 @@ describe('MerkleDistributor', () => {
           .withArgs(9, wallets[9].address, 10)
       })
 
-      it('gas', async () => {
-        const proof = tree.getProof(9, wallets[9].address, BigNumber.from(10))
-        const tx = await distributor.claim(9, wallets[9].address, 10, proof, overrides)
-        const receipt = await tx.wait()
-        expect(receipt.gasUsed).to.eq(80960)
-      })
+    //   it('gas', async () => {
+    //     const proof = tree.getProof(9, wallets[9].address, BigNumber.from(10))
+    //     const tx = await distributor.claim(9, wallets[9].address, 10, proof, overrides)
+    //     const receipt = await tx.wait()
+    //     expect(receipt.gasUsed).to.eq(80960)
+    //   })
 
-      it('gas second down about 15k', async () => {
-        await distributor.claim(
-          0,
-          wallets[0].address,
-          1,
-          tree.getProof(0, wallets[0].address, BigNumber.from(1)),
-          overrides
-        )
-        const tx = await distributor.claim(
-          1,
-          wallets[1].address,
-          2,
-          tree.getProof(1, wallets[1].address, BigNumber.from(2)),
-          overrides
-        )
-        const receipt = await tx.wait()
-        expect(receipt.gasUsed).to.eq(65940)
-      })
+    //   it('gas second down about 15k', async () => {
+    //     await distributor.claim(
+    //       0,
+    //       wallets[0].address,
+    //       1,
+    //       tree.getProof(0, wallets[0].address, BigNumber.from(1)),
+    //       overrides
+    //     )
+    //     const tx = await distributor.claim(
+    //       1,
+    //       wallets[1].address,
+    //       2,
+    //       tree.getProof(1, wallets[1].address, BigNumber.from(2)),
+    //       overrides
+    //     )
+    //     const receipt = await tx.wait()
+    //     expect(receipt.gasUsed).to.eq(65940)
+    //   })
     })
 
     describe('realistic size tree', () => {
@@ -261,45 +254,45 @@ describe('MerkleDistributor', () => {
         await token.setBalance(distributor.address, constants.MaxUint256)
       })
 
-      it('gas', async () => {
-        const proof = tree.getProof(50000, wallet0.address, BigNumber.from(100))
-        const tx = await distributor.claim(50000, wallet0.address, 100, proof, overrides)
-        const receipt = await tx.wait()
-        expect(receipt.gasUsed).to.eq(91650)
-      })
-      it('gas deeper node', async () => {
-        const proof = tree.getProof(90000, wallet0.address, BigNumber.from(100))
-        const tx = await distributor.claim(90000, wallet0.address, 100, proof, overrides)
-        const receipt = await tx.wait()
-        expect(receipt.gasUsed).to.eq(91586)
-      })
-      it('gas average random distribution', async () => {
-        let total: BigNumber = BigNumber.from(0)
-        let count: number = 0
-        for (let i = 0; i < NUM_LEAVES; i += NUM_LEAVES / NUM_SAMPLES) {
-          const proof = tree.getProof(i, wallet0.address, BigNumber.from(100))
-          const tx = await distributor.claim(i, wallet0.address, 100, proof, overrides)
-          const receipt = await tx.wait()
-          total = total.add(receipt.gasUsed)
-          count++
-        }
-        const average = total.div(count)
-        expect(average).to.eq(77075)
-      })
-      // this is what we gas golfed by packing the bitmap
-      it('gas average first 25', async () => {
-        let total: BigNumber = BigNumber.from(0)
-        let count: number = 0
-        for (let i = 0; i < 25; i++) {
-          const proof = tree.getProof(i, wallet0.address, BigNumber.from(100))
-          const tx = await distributor.claim(i, wallet0.address, 100, proof, overrides)
-          const receipt = await tx.wait()
-          total = total.add(receipt.gasUsed)
-          count++
-        }
-        const average = total.div(count)
-        expect(average).to.eq(62824)
-      })
+      // it('gas', async () => {
+      //   const proof = tree.getProof(50000, wallet0.address, BigNumber.from(100))
+      //   const tx = await distributor.claim(50000, wallet0.address, 100, proof, overrides)
+      //   const receipt = await tx.wait()
+      //   expect(receipt.gasUsed).to.eq(91650)
+      // })
+      // it('gas deeper node', async () => {
+      //   const proof = tree.getProof(90000, wallet0.address, BigNumber.from(100))
+      //   const tx = await distributor.claim(90000, wallet0.address, 100, proof, overrides)
+      //   const receipt = await tx.wait()
+      //   expect(receipt.gasUsed).to.eq(91586)
+      // })
+      // it('gas average random distribution', async () => {
+      //   let total: BigNumber = BigNumber.from(0)
+      //   let count: number = 0
+      //   for (let i = 0; i < NUM_LEAVES; i += NUM_LEAVES / NUM_SAMPLES) {
+      //     const proof = tree.getProof(i, wallet0.address, BigNumber.from(100))
+      //     const tx = await distributor.claim(i, wallet0.address, 100, proof, overrides)
+      //     const receipt = await tx.wait()
+      //     total = total.add(receipt.gasUsed)
+      //     count++
+      //   }
+      //   const average = total.div(count)
+      //   expect(average).to.eq(77075)
+      // })
+      // // this is what we gas golfed by packing the bitmap
+      // it('gas average first 25', async () => {
+      //   let total: BigNumber = BigNumber.from(0)
+      //   let count: number = 0
+      //   for (let i = 0; i < 25; i++) {
+      //     const proof = tree.getProof(i, wallet0.address, BigNumber.from(100))
+      //     const tx = await distributor.claim(i, wallet0.address, 100, proof, overrides)
+      //     const receipt = await tx.wait()
+      //     total = total.add(receipt.gasUsed)
+      //     count++
+      //   }
+      //   const average = total.div(count)
+      //   expect(average).to.eq(62824)
+      // })
 
       it('no double claims in random distribution', async () => {
         for (let i = 0; i < 25; i += Math.floor(Math.random() * (NUM_LEAVES / NUM_SAMPLES))) {
@@ -337,24 +330,26 @@ describe('MerkleDistributor', () => {
     it('check the proofs is as expected', () => {
       expect(claims).to.deep.eq({
         [wallet0.address]: {
-          index: 0,
+          index: 2,
           amount: '0xc8',
-          proof: ['0x2a411ed78501edb696adca9e41e78d8256b61cfac45612fa0434d7cf87d916c6'],
+          proof: [
+            "0x0782528e118c4350a2465fbeabec5e72fff06991a29f21c08d37a0d275e38ddd",
+            "0xf3c5acb53398e1d11dcaa74e37acc33d228f5da944fbdea9a918684074a21cdb"
+          ],
         },
         [wallet1.address]: {
           index: 1,
           amount: '0x012c',
           proof: [
-            '0xbfeb956a3b705056020a3b64c540bff700c0f6c96c55c0a5fcab57124cb36f7b',
-            '0xd31de46890d4a77baeebddbd77bf73b5c626397b73ee8c69b51efe4c9a5a72fa',
+            "0xc86fd316fa3e7b83c2665b5ccb63771e78abcc0429e0105c91dde37cb9b857a4",
+            "0xf3c5acb53398e1d11dcaa74e37acc33d228f5da944fbdea9a918684074a21cdb"
           ],
         },
         [wallets[2].address]: {
-          index: 2,
+          index: 0,
           amount: '0xfa',
           proof: [
-            '0xceaacce7533111e902cc548e961d77b23a4d8cd073c6b68ccf55c62bd47fc36b',
-            '0xd31de46890d4a77baeebddbd77bf73b5c626397b73ee8c69b51efe4c9a5a72fa',
+            '0x0c9bcaca2a1013557ef7f348b514ab8a8cd6c7051b69e46b1681a2aff22f4a88',
           ],
         },
       })
