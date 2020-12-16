@@ -8,6 +8,10 @@ program
     '-i, --input <path>',
     'input JSON file location containing a map of account addresses to string balances'
   )
+  .requiredOption(
+    '-o, --output <path>',
+    'Merkle tree output file location containing Merkle root and Merkle proofs'
+  )
 
 program.parse(process.argv)
 
@@ -15,4 +19,4 @@ const json = JSON.parse(fs.readFileSync(program.input, { encoding: 'utf8' }))
 
 if (typeof json !== 'object') throw new Error('Invalid JSON')
 
-console.log(JSON.stringify(parseBalanceMap(json)))
+fs.writeFileSync(program.output, JSON.stringify(parseBalanceMap(json), null, 2));
