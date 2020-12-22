@@ -41,19 +41,21 @@ fs.createReadStream(program.input)
     for (let i = 0; i < results.length; i++) {
       const result = results[i];
       let address = result["Ethereum wallet (optional) - to receive rewards"]
-      const date = result["OPTIN_TIME"]
-      if(address.includes(".eth")) {
-        address = await web3.eth.ens.getAddress(address)
-      } 
-
-      if (new Date("2020-12-01 0:00:00").getTime() > new Date(date).getTime()) {
-        balanceMap[address] = amount
-      } else {
-        balanceMap[address] = Number(amount) / 2
+      if (address) {
+        const date = result["OPTIN_TIME"]
+        if(address.includes(".eth")) {
+          address = await web3.eth.ens.getAddress(address)
+        } 
+  
+        if (new Date("2020-12-01 0:00:00").getTime() > new Date(date).getTime()) {
+          balanceMap[address] = amount
+        } else {
+          balanceMap[address] = Number(amount) / 2
+        }
       }
       
     }
-    fs.writeFileSync("scripts/rekt_users.json", JSON.stringify(balanceMap, null, 2));
+    fs.writeFileSync(`${program.output.split(".")[0]}_balanceMap.json`, JSON.stringify(balanceMap, null, 2));
     fs.writeFileSync(program.output, JSON.stringify(parseBalanceMap(balanceMap), null, 2));
   })
 
