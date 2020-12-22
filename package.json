@@ -11,6 +11,7 @@
     "compile": "npx hardhat compile",
     "generate-merkle-root:rekt": "ts-node scripts/generate-merkle-root.ts --input scripts/rekt.json --output scripts/rekt-merkle.json",
     "generate-merkle-root:example": "ts-node scripts/generate-merkle-root.ts --input scripts/example.json --output scripts/example-merkle.json",
+    "csv-merkle-root:example": "ts-node scripts/csv-to-merkle-tree.ts --input scripts/rekt_users_template.csv --output scripts/csv-example-merkle.json --amount 1000 --node %ETH_NODE_URL%",
     "verify-merkle-root:rekt": "ts-node scripts/verify-merkle-root.ts --input scripts/rekt-merkle.json"
   },
   "repository": {
@@ -39,9 +40,10 @@
     "hardhat-deploy-ethers": "^0.3.0-beta.5",
     "ts-node": "^9.1.1",
     "typescript": "^4.1.2",
-    "web3": "^1.3.0"
+    "web3": "^1.2.6"
   },
   "dependencies": {
+    "csv-parser": "^3.0.0",
     "dotenv": "^8.2.0"
   }
 }
