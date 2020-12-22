@@ -31,7 +31,6 @@ const web3 = new Web3(new Web3.providers.HttpProvider(program.node));
 
 const results: any = [];
 const amount: Number = Number(program.amount);
-
 fs.createReadStream(program.input)
   .pipe(csv())
   .on('data', (data) => results.push(data))
@@ -55,7 +54,7 @@ fs.createReadStream(program.input)
       }
       
     }
-    fs.writeFileSync(`${program.output.split(".")[0]}_balanceMap.json`, JSON.stringify(balanceMap, null, 2));
+    fs.writeFileSync(`${program.output.split(".").slice(0,-1).join(".")}_balanceMap.json`, JSON.stringify(balanceMap, null, 2));
     fs.writeFileSync(program.output, JSON.stringify(parseBalanceMap(balanceMap), null, 2));
   })
 
