@@ -43,6 +43,7 @@ fs.createReadStream(program.input)
       let address = result["Ethereum wallet (optional) - to receive rewards"]
       if (address) {
         const date = result["OPTIN_TIME"]
+        console.log("Rekt User Address: ", address);
         if(address.includes(".eth")) {
           address = await web3.eth.ens.getAddress(address)
         } 
