@@ -1,48 +1,49 @@
 {
-  "name": "@uniswap/merkle-distributor",
+  "name": "@rekt/merkle-tree-distribution",
   "author": {
-    "name": "Moody Salem"
+    "name": "Thrilok kumar"
   },
-  "description": "📦 A smart contract that distributes a balance of tokens according to a merkle root",
-  "version": "1.0.1",
-  "homepage": "https://uniswap.org",
-  "keywords": [
-    "uniswap",
-    "erc20"
-  ],
+  "version": "1.0.0",
+  "description": "Merkle Tree Distribution for Rekt Subscribers",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx hardhat test",
+    "compile": "npx hardhat compile",
+    "generate-merkle-root:rekt": "ts-node scripts/generate-merkle-root.ts --input scripts/rekt.json --output scripts/rekt-merkle.json",
+    "generate-merkle-root:example": "ts-node scripts/generate-merkle-root.ts --input scripts/example.json --output scripts/example-merkle.json",
+    "csv-merkle-root:example": "ts-node scripts/csv-to-merkle-tree.ts --input scripts/rekt_users_template.csv --output scripts/csv-example-merkle.json --amount 1000 --node %ETH_NODE_URL%",
+    "verify-merkle-root:rekt": "ts-node scripts/verify-merkle-root.ts --input scripts/rekt-merkle.json"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Uniswap/merkle-distributor"
+    "url": "git+https://github.com/RektHQ/merkle-tree-distribution.git"
   },
-  "files": [
-    "build"
-  ],
-  "engines": {
-    "node": ">=10"
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RektHQ/merkle-tree-distribution/issues"
   },
+  "homepage": "https://github.com/RektHQ/merkle-tree-distribution#readme",
   "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.0.0",
+    "@nomiclabs/hardhat-waffle": "^2.0.0",
+    "@nomiclabs/hardhat-web3": "^2.0.0",
     "@openzeppelin/contracts": "3.1.0",
-    "@types/chai": "^4.2.6",
-    "@types/mocha": "^5.2.7",
-    "axios": "^0.20.0",
+    "@types/chai": "^4.2.14",
+    "@types/mocha": "^8.2.0",
+    "@types/node": "^14.14.12",
     "chai": "^4.2.0",
-    "commander": "^6.1.0",
-    "ethereum-waffle": "^3.0.0",
-    "ethereumjs-util": "^7.0.4",
-    "mocha": "^6.2.2",
-    "prettier": "^2.0.5",
-    "rimraf": "^3.0.0",
-    "solc": "0.6.11",
-    "ts-node": "^8.5.4",
-    "typescript": "^3.7.3"
+    "commander": "^6.2.0",
+    "ethereum-waffle": "^3.2.0",
+    "ethers": "^5.0.19",
+    "hardhat": "^2.0.5",
+    "hardhat-deploy": "0.7.0-beta.28",
+    "hardhat-deploy-ethers": "^0.3.0-beta.5",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.1.2",
+    "web3": "^1.2.6"
   },
-  "scripts": {
-    "precompile": "rimraf ./build/",
-    "compile": "waffle",
-    "pretest": "yarn compile",
-    "test": "mocha",
-    "generate-merkle-root": "ts-node scripts/generate-merkle-root.ts",
-    "generate-merkle-root:example": "ts-node scripts/generate-merkle-root.ts --input scripts/example.json",
-    "prepublishOnly": "yarn test"
+  "dependencies": {
+    "csv-parser": "^3.0.0",
+    "dotenv": "^8.2.0"
   }
 }

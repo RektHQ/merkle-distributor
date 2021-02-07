@@ -1,3 +1,11 @@
 node_modules/
 build/
 wrangler.toml
+
+#Hardhat files
+cache
+artifacts
+
+.env
+
+package-lock.json
